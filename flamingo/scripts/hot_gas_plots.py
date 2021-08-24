@@ -13,8 +13,6 @@ import astropy.units as u
 import matplotlib.pyplot as plt
 import numpy as np
 from scipy import stats
-from natsort import natsorted
-import latexify
 import glob
 import os
 from swiftsimio import load as load_snap
