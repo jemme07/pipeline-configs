@@ -196,20 +196,16 @@ def read_hot_gas_props(
         df_gas["rho"] = data.gas.densities.to("g * cm ** -3").value
         df_gas["nH"] = df_elements.hydrogen.values * df_gas.rho.values / mp
         # df_gas['nH'] = np.full_like(df_gas.temp.values, 1e6)
-        df_gas["lambda_c"] = (
-            xray_new.interpolate_X_Ray(
-                data.gas.densities,
-                data.gas.temperatures,
-                df_elements.to_numpy(),
-                z,
-                data.gas.masses,
-                obs_data_dir,
-                band="ROSAT",
-                observing_type="energies",
-                fill_value=-400,
-                X_Ray_table=X_Ray_table,
-            )
-            / df_gas.nH.values ** 2
+        df_gas["lambda_c"] = xray_new.interpolate_X_Ray(
+            data.gas.densities,
+            data.gas.temperatures,
+            data.gas.smoothed_element_mass_fractions,
+            z,
+            data.gas.masses,
+            band="ROSAT",
+            observing_type="energies_intrinsic",
+            fill_value=-400,
+            X_Ray_table=X_Ray_table,
         )
         df_gas["in_FOF"] = mask
 
@@ -832,7 +828,7 @@ if __name__ == "__main__":
 
     arguments = ScriptArgumentParser(
         description="Creates hot gas plots.",
-        additional_arguments={"X_ray_table": "X_Ray_table_full_new.hdf5"},
+        additional_arguments={"X_Ray_table": "X_Ray_table_full_new.hdf5"},
     )
 
     plt.style.use(arguments.stylesheet_location)

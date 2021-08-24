@@ -6,9 +6,8 @@ from unyt import g, cm, mp, erg, s
 
 
 class interpolate:
-    def init(self, X_Ray_table):
+    def __init__(self, X_Ray_table):
         self.table_file = X_Ray_table
-        pass
 
     def load_table(self, band, observing_type):
         self.table = h5py.File(self.table_file, "r")
@@ -334,11 +333,9 @@ def interpolate_X_Ray(
 
     # Find density offsets
     idx_n, dx_n = get_index_1d(interp.density_bins, data_n[joint_mask])
-    print("nh", data_n[joint_mask][0], idx_n[0], dx_n[0])
 
     # Find temperature offsets
     idx_T, dx_T = get_index_1d(interp.temperature_bins, data_T[joint_mask])
-    print("T", data_T[joint_mask][0], idx_T[0], dx_T[0])
     # Find element offsets
     # mass of ['hydrogen', 'helium', 'carbon', 'nitrogen', 'oxygen', 'neon', 'magnesium', 'silicon', 'iron']
     # element_masses = [1.008, 4.003, 12.01, 14.01, 16., 20.18, 24.31, 28.09, 55.85]
@@ -363,11 +360,9 @@ def interpolate_X_Ray(
     idx_he, dx_he = get_index_1d_irregular(
         interp.He_bins, np.log10(abundances[:, 1])
     )
-    print("he", idx_he[0], dx_he[0])
 
     # Find redshift offsets
     idx_z, dx_z = get_index_1d(interp.redshift_bins, redshift)
-    print("Start interpolation")
     emissivities[joint_mask] = get_table_interp(
         interp.dn,
         interp.dT,
