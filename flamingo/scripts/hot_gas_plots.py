@@ -196,17 +196,22 @@ def read_hot_gas_props(
         df_gas["rho"] = data.gas.densities.to("g * cm ** -3").value
         df_gas["nH"] = df_elements.hydrogen.values * df_gas.rho.values / mp
         # df_gas['nH'] = np.full_like(df_gas.temp.values, 1e6)
-        df_gas["lambda_c"] = xray_new.interpolate_X_Ray(
-            data.gas.densities,
-            data.gas.temperatures,
-            data.gas.smoothed_element_mass_fractions,
-            z,
-            data.gas.masses,
-            band="ROSAT",
-            observing_type="energies_intrinsic",
-            fill_value=-400,
-            X_Ray_table=X_Ray_table,
-        )
+        if hasattr(data.gas, xray_luminosities):
+            df_gas["lambda_c"] = data.gas.xray_luminosities.ROSAT.to(
+                "ergs/s"
+            ).value
+        else:
+            df_gas["lambda_c"] = xray_new.interpolate_X_Ray(
+                data.gas.densities,
+                data.gas.temperatures,
+                data.gas.smoothed_element_mass_fractions,
+                z,
+                data.gas.masses,
+                band="ROSAT",
+                observing_type="energies_intrinsic",
+                fill_value=-400,
+                X_Ray_table=X_Ray_table,
+            )
         df_gas["in_FOF"] = mask
 
         df_elements = df_elements.div(df_elements.hydrogen, axis=0)
