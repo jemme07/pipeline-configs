@@ -196,7 +196,7 @@ def read_hot_gas_props(
         df_gas["rho"] = data.gas.densities.to("g * cm ** -3").value
         df_gas["nH"] = df_elements.hydrogen.values * df_gas.rho.values / mp
         # df_gas['nH'] = np.full_like(df_gas.temp.values, 1e6)
-        if hasattr(data.gas, xray_luminosities):
+        if hasattr(data.gas, "xray_luminosities"):
             df_gas["lambda_c"] = data.gas.xray_luminosities.ROSAT.to(
                 "ergs/s"
             ).value
@@ -257,19 +257,7 @@ def read_hot_gas_props(
         df_gas["distance"] = df_gas.distance / df_gas.r500
         df_gas = df_gas.loc[df_gas.distance <= 5]
 
-        df_gas["Lx"] = (
-            df_gas.lambda_c
-            * (
-                df_gas.rho
-                * (
-                    df_gas.ne_nH
-                    / ((df_gas.ne_nH + df_gas.ni_nH) * df_gas.mu * mp)
-                ).values.astype(np.float64)
-                ** 2
-            )
-            * df_gas.mass.values
-            / df_gas.ne_nH
-        )
+        df_gas["Lx"] = df_gas.lambda_c
         # df_gas['Lx'] = df_gas.lambda_c * df_gas.mass.values / df_gas.rho
 
         df_gas["ypar"] = (
@@ -296,7 +284,7 @@ def plot_hot_gas_props(arguments):
     snapshot_names = [f"{snapshot}" for snapshot in arguments.snapshot_list]
     cat_names = [f"{snapshot}" for snapshot in arguments.catalogue_list]
     obs_data_dir = (
-        arguments.config_directory + "/../observational_data/data/HotGasProps/"
+        arguments.config_directory + "/../observational_data/data/HotGasProps/raw/"
     )
     output_path = arguments.output_directory
 
@@ -833,7 +821,7 @@ if __name__ == "__main__":
 
     arguments = ScriptArgumentParser(
         description="Creates hot gas plots.",
-        additional_arguments={"X_Ray_table": "X_Ray_table_full_new.hdf5"},
+        additional_arguments={"X_Ray_table": "X_Ray_tables.hdf5"},
     )
 
     plt.style.use(arguments.stylesheet_location)
